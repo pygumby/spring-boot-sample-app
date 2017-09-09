@@ -110,7 +110,7 @@ This is what a response to such a request might look like:
 ````json
 [
   {"login": "odersky", "score": 1},
-  {"login": "ypsy", "score": 0.04040404040404041}
+  {"login": "ypsy",    "score": 0.04040404040404041}
 ]
 ````
 
