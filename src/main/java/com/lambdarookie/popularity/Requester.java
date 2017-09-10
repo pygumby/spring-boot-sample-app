@@ -9,16 +9,16 @@ import com.lambdarookie.popularity.exceptions.NotFoundException;
 public class Requester {
 
   // Issues a GET request to GitHub's API and then populates and returns a `User` instance
-  public User requestUser(String name) throws NotFoundException, InternalServerErrorException {
+  public User requestUser(String login) throws NotFoundException, InternalServerErrorException {
     RestTemplate restTemplate = new RestTemplate();
     try {
-      User user = restTemplate.getForObject("https://api.github.com/users/" + name, User.class);
+      User user = restTemplate.getForObject("https://api.github.com/users/" + login, User.class);
       return user;
     } catch (Exception e) {
       if (e.getMessage().equals("404 Not Found")) {
-        throw new NotFoundException("There seems to be no user @" + name + ".");
+        throw new NotFoundException("There seems to be no user @" + login + ".");
       } else {
-        throw new InternalServerErrorException("Something went wrong when requesting user @" + name + ".");
+        throw new InternalServerErrorException("Something went wrong when requesting user @" + login + ".");
       }
     }
   }

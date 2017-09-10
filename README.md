@@ -92,6 +92,8 @@ GET http://localhost:8080/score?login=someusernameveryveryunlikelytoexist
 
 #### Not-yet implemented features
 
+> As of now, all of the features described below can actually be used. There is, however, no database support yet. This means that data doesn't get persisted and is gone as soon as the server stops running. There are also no tests provided for those features.
+
 I plan to introduce a route `user` to allow for user names to be saved and deleted. Saving user names will cause them to be persisted in a database, deleting them removes them from it.
 
 ````http
@@ -99,7 +101,7 @@ POST   http://localhost:8080/user?login=someusername
 DELETE http://localhost:8080/user?login=someusername
 ````
 
-Lastly, I plan to introduce a route `list` to allow for high score lists to be obtained. For each user name stored in the database, an up-to-date popularity score is calculated. Then, the users are sorted by their score and returned.
+Lastly, I plan to introduce a route `list` to allow for a list of all users and their scores to be obtained. For each user name stored in the database, an up-to-date popularity score is calculated.
 
 ````http
 GET http://localhost:8080/list
@@ -109,8 +111,8 @@ This is what a response to such a request might look like:
 
 ````json
 [
-  {"login": "odersky", "score": 1},
   {"login": "ypsy",    "score": 0.04040404040404041}
+  {"login": "odersky", "score": 1},
 ]
 ````
 

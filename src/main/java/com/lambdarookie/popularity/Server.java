@@ -1,6 +1,8 @@
 package com.lambdarookie.popularity;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,10 @@ import com.lambdarookie.popularity.exceptions.*;
 // Defines the app's REST API
 @RestController
 public class Server {
+
+  private final Requester requester = new Requester();
+  private final Calculator calculator = new Calculator();
+  private final Persistor persistor = new Persistor();
 
   // Wiring `BadRequestException` to HTTP status `400 Bad Request`
   @ExceptionHandler(BadRequestException.class)
@@ -36,11 +42,9 @@ public class Server {
     response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
-  // Definition of the `/score?login=someUserName` route (GET)
-  // A GitHub user name (`login`) has to be provided, an instance of `Score`, representing the user's popularity
-  // score will be returned.
-  @RequestMapping(value = "score", method=RequestMethod.GET)
-  public Score score(@RequestParam(value = "login") String login)
+  // `validateLoginParameter` will throw an exception if the provided string is null or empty, equals "lambdarookie", or
+  // in case there is no GitHub user with the provided user name.
+  private void validateLoginParameter(String login)
       throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
     if (login == null || login.isEmpty()) {
       throw new BadRequestException("String parameter 'login' cannot be null or empty.");
@@ -48,11 +52,51 @@ public class Server {
     if (login.equals("lambdarookie")) {
       throw new ForbiddenException("No no no, I am embarrassed of my score, you can't look it up.");
     }
-    final Requester requester = new Requester();
-    final Calculator calculator = new Calculator();
-    final User user = requester.requestUser(login);
-    final double score = calculator.calculateScore(user);
+    // Ensuring that there actually is a GitHub user with the provided user name
+    this.requester.requestUser(login); // May throw NotFoundException, InternalServerErrorException
+  }
+
+  // Definition of the `/score?login=someusername` route (GET)
+  // A GitHub user name (`login`) has to be provided, an instance of `Score`, representing the user's popularity score
+  // will be returned.
+  @RequestMapping(value = "score", method=RequestMethod.GET)
+  public Score getScore(@RequestParam(value = "login") String login)
+      throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
+    this.validateLoginParameter(login);
+    final User user = this.requester.requestUser(login);
+    final double score = this.calculator.calculateScore(user);
     return new Score(user.getLogin(), score);
+  }
+
+  // Definition of the `/user?login=someusername` route (POST)
+  // A GitHub user name (`login`) has to be provided and it will be stored in the database.
+  @RequestMapping(value = "user", method = RequestMethod.POST)
+  public void postUser(@RequestParam(value = "login") String login)
+      throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
+    this.validateLoginParameter(login);
+    this.persistor.addLogin(login);
+  }
+
+  // Definition of the `/user?login=someusername` route (DELETE)
+  // A GitHub user name (`login`) has to be provided and it will be deleted from the database.
+  @RequestMapping(value = "user", method = RequestMethod.DELETE)
+  public void deleteUser(@RequestParam(value = "login") String login) throws NotFoundException {
+    this.persistor.removeLogin(login);
+  }
+
+  // Definition of the `/list/` route (GET)
+  // A `Set` of `Score`s (one for each GitHub user stored in the database) will be returned.
+  @RequestMapping(value = "list", method = RequestMethod.GET)
+  public Set<Score> getList()
+      throws BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException {
+    Set<String> logins = this.persistor.getLogins();
+    Set<Score> scores = new HashSet<>();
+    for (String login : logins) {
+      final User user = this.requester.requestUser(login);
+      final Score score = new Score(user.getLogin(), calculator.calculateScore(user));
+      scores.add(score);
+    }
+    return scores;
   }
 
 }
