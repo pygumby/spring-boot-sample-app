@@ -29,9 +29,9 @@ public class ServerTests {
       // For this and some of the following tests to succeed, of course, it is required that the GitHub account @odersky
       // has not been deleted.
       .perform(get("/score").param("login", "odersky"))
-      .andExpect(status().isOk())
+      .andExpect(status().isOk());
       // At the time of this writing, @odersky's score was 1 (highest). To test that as well, uncomment the following:
-      .andExpect(jsonPath("$.score").value(1));
+      // .andExpect(jsonPath("$.score").value(1));
   }
 
   @Test
@@ -58,7 +58,6 @@ public class ServerTests {
   @Test
   public void postUserStatusShouldBeOk() throws Exception {
     this.mockMvc
-      // Again, for this test to succeed, it is required that the GitHub account @odersky has not been deleted.
       .perform(post("/user").param("login", "odersky"))
       .andExpect(status().isOk());
     this.mockMvc
