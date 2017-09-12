@@ -1,6 +1,6 @@
 package com.lambdarookie.popularity;
 
-import com.lambdarookie.popularity.dataclasses.User;
+import com.lambdarookie.popularity.models.User;
 
 // Performs calculations (normalization, popularity score)
 public class Calculator {

@@ -13,11 +13,12 @@ apply plugin: 'org.springframework.boot'
 
 jar {
   baseName = 'popularity'
-  version =  '0.0.1-SNAPSHOT'
+  version = '0.0.1-SNAPSHOT'
 }
 
 repositories {
   mavenCentral()
+  maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
 
 sourceCompatibility = 1.8
@@ -25,8 +26,10 @@ targetCompatibility = 1.8
 
 dependencies {
   compile("org.springframework.boot:spring-boot-starter-web")
+  compile("org.springframework.boot:spring-boot-starter-data-jpa")
   compile("org.springframework:spring-web")
   compile("com.fasterxml.jackson.core:jackson-databind")
+  compile("com.h2database:h2")
   testCompile("org.springframework.boot:spring-boot-starter-test")
   testCompile("junit:junit")
 }

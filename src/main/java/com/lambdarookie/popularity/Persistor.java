@@ -1,37 +1,36 @@
 package com.lambdarookie.popularity;
 
-import com.lambdarookie.popularity.exceptions.BadRequestException;
-import com.lambdarookie.popularity.exceptions.NotFoundException;
-
 import java.util.HashSet;
 import java.util.Set;
+import com.lambdarookie.popularity.models.UserName;
+import com.lambdarookie.popularity.persistence.UserNameRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-// `Persistor` is a dummy class that will eventually be replaced by a class that actually deals with a database. It
-// mocks the ability to store and delete GitHub user names in a database as well as to retrieve them all at once.
+@Component
 public class Persistor {
 
-  private Set<String> logins;
+  @Autowired
+  private UserNameRepository repository;
 
   public Persistor() {
-    this.logins = new HashSet<>();
   }
 
-  public void addLogin(String login) throws BadRequestException {
-    if (this.logins.contains(login)) {
-      throw new BadRequestException("Login @" + login + " cannot be stored since it already is.");
-    }
-    this.logins.add(login);
+  public void addLogin(String login) {
+    this.repository.save(new UserName(login));
   }
 
-  public void removeLogin(String login) throws NotFoundException {
-    if (!this.logins.contains(login)) {
-      throw new NotFoundException("Login @" + login + " cannot be removed since it is not stored.");
-    }
-    this.logins.remove(login);
+  public void removeLogin(String login) {
+    this.repository.delete(new UserName(login));
   }
 
   public Set<String> getLogins() {
-    return this.logins;
+    Iterable<UserName> result = this.repository.findAll();
+    Set<String> logins = new HashSet<String>();
+    for (UserName userName : result) {
+      logins.add(userName.getLogin());
+    }
+    return logins;
   }
 
 }

@@ -2,7 +2,7 @@ package com.lambdarookie.popularity;
 
 import org.junit.Test;
 import org.junit.Assert;
-import com.lambdarookie.popularity.dataclasses.User;
+import com.lambdarookie.popularity.models.User;
 
 public class CalculatorTests {
 
