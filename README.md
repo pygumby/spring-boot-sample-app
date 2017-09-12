@@ -6,12 +6,12 @@
 
 As part of the job application process at a German fintech start-up, I was asked to write a simple Java application featuring some basic functionality. I ended up implementing this exemplary app called `popularity` using Spring Boot. It revolves around the notion of a fairly bogus "GitHub popularity score", which is based on the ratio between the number of people that follow a user and the number of people that user follows.
 
-This app is supposed to fulfill a set of requirements. They are listed below, along with the information whether or not they are featured yet.
+This app is supposed to fulfill a set of requirements, which are listed below.
 
 #### Feature requirements
-- [x] The app should provide a REST API that takes parameters and gives reasonable return codes.
-- [x] At some point, GitHub's REST API should somehow be used.
-- [ ] Data should be persisted in a database such as MySQL or H2 using ORM.
+- [x] The app should provide a REST API that takes parameters and returns reasonable HTTP status codes.
+- [x] GitHub's REST API should somehow be used.
+- [x] Data should be persisted in a database such as MySQL or H2 using ORM.
 
 #### Implementation requirements
 - [x] Git and GitHub should be used.
@@ -22,19 +22,17 @@ This app is supposed to fulfill a set of requirements. They are listed below, al
 
 ### Usage
 
-Make sure you have Java and Gradle installed, then navigate into the project root directory and do `gradle test` to make sure everything is fine. In case some tests fail, information is provided in the file `build/reports/tests/test/index.html`. In order to start the app, do `gradle bootRun`.
+Make sure you have Java (8 or newer) and Gradle (2.3 or newer) installed, then navigate into the project root directory and do `gradle test` to make sure everything is fine. In case some tests fail, information is provided in the file `build/reports/tests/test/index.html`. In order to start the app, do `gradle bootRun`. Once the app is running, you can issue HTTP requests to the server at `http://localhost:8080/`.
 
-#### Implemented features
+#### Requesting a user's score
 
-Once the app is running, you can issue HTTP requests to the server at `http://localhost:8080/`.
-
-Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with a GET request to the route `score`:
+Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with a `GET` request to the route `score`, e.g.:
 
 ````http
 GET http://localhost:8080/score?login=ypsy
 ````
 
-At the time of this writing, @ypsy had one follower and followed two users himself. Based on this, his popularity score was `0.04040404040404041`. A popularity score is a number between 0 and 1. Rounded and multiplied by 100, @ypsy's score can be interpreted as 4%. This is what the JSON response looks like:
+At the time of this writing, @ypsy had one follower and followed two users himself. Based on this, his popularity score was `0.04040404040404041`. A popularity score is a number between 0 and 1. Rounded and multiplied by 100, @ypsy's score can be interpreted as 4%. This is what the JSON response to the above request looks like:
 
 ````json
 {
@@ -43,7 +41,7 @@ At the time of this writing, @ypsy had one follower and followed two users himse
 }
 ````
 
-Since this app features error handling and sensible HTTP status codes, malformed HTTP requests trigger exceptions that result in responses with appropriate status codes. Below you can see malicious requests and how the app responded to them:
+Since this app features error handling and sensible HTTP status codes, malformed HTTP requests trigger exceptions that then result in responses with respective status codes. Below you can see malicious requests and how the app responds to them:
 
 ````http
 GET http://localhost:8080/score?login=
@@ -90,18 +88,37 @@ GET http://localhost:8080/score?login=someusernameveryveryunlikelytoexist
 }
 ````
 
-#### Not-yet implemented features
+#### Storing and deleting user names
 
-> As of now, all of the features described below can actually be used. There is, however, no database support yet. This means that data doesn't get persisted and is gone as soon as the server stops running. There are also no tests provided for those features.
+It is possible to store and delete GitHub user names to and from a database, respectively. Note that since an in-memory H2 database is used, data is only persisted as long as the server is running. Persistence is only featured in this app to demonstrate dependency injection and ORM.
 
-I plan to introduce a route `user` to allow for user names to be saved and deleted. Saving user names will cause them to be persisted in a database, deleting them removes them from it.
+User names can be stored or deleted by issuing a `POST` or `DELETE` request to the `user` route, respectively, e.g.:
 
 ````http
-POST   http://localhost:8080/user?login=someusername
-DELETE http://localhost:8080/user?login=someusername
+POST   http://localhost:8080/user?login=ypsy
+DELETE http://localhost:8080/user?login=ypsy
 ````
 
-Lastly, I plan to introduce a route `list` to allow for a list of all users and their scores to be obtained. For each user name stored in the database, an up-to-date popularity score is calculated.
+Malformed `POST` requests to the route `user` result in the following HTTP status codes:
+
+| HTTP status code      | Reason                                   |
+| --------------------- | ---------------------------------------- |
+| `BadRequest`          | `String login` is `null` or empty.       |
+| `Forbidden`           | User @lambdarookie is not allowed to be looked up. |
+| `NotFound`            | User with the provided name cannot be found. |
+| `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown. |
+
+Malformed `DELETE` requests to the route `user` result in the following HTTP status codes:
+
+| HTTP status code | Reason                             |
+| ---------------- | ---------------------------------- |
+| `BadRequest`     | `String login` is `null` or empty. |
+
+Some malicious behaviour is silently ignored by the database, e.g., storing the same user name more than once or deleting a user name that is not stored.
+
+#### Requesting a list of stored users and their popularity scores
+
+Lastly, by issuing a `GET` request to the `list` route, a list containing all users stored in the database as well as their popularity scores can be obtained. For each user name stored in the database, an up-to-date score is calculated.
 
 ````http
 GET http://localhost:8080/list/
@@ -115,6 +132,13 @@ This is what a response to such a request might look like:
   {"login": "odersky", "score": 1},
 ]
 ````
+
+Malformed `GET` requests to the route `list` result in the following HTTP status codes:
+
+| HTTP status code      | Reason                                   |
+| --------------------- | ---------------------------------------- |
+| `NotFound`            | User with the stored name cannot be found. (This should only happen if the respective GitHub account has been deleted after it has been stored to the database.) |
+| `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown. |
 
 ### Credit
 
