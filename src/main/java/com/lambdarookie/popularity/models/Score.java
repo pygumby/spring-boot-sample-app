@@ -1,4 +1,4 @@
-package com.lambdarookie.popularity.dataclasses;
+package com.lambdarookie.popularity.models;
 
 // Represents a GitHub user's popularity score
 public class Score {

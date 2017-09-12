@@ -34,7 +34,7 @@ Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with 
 GET http://localhost:8080/score?login=ypsy
 ````
 
-At the time of this writing, @ypsy had one follower and followed two users himself. Based on this, his popularity score was `0.04040404040404041`. A popularity score is a number between 0 and 1. Rounded and multiplied by 100, `ypsy`'s score can be interpreted as 4%. This is what the JSON response looks like:
+At the time of this writing, @ypsy had one follower and followed two users himself. Based on this, his popularity score was `0.04040404040404041`. A popularity score is a number between 0 and 1. Rounded and multiplied by 100, @ypsy's score can be interpreted as 4%. This is what the JSON response looks like:
 
 ````json
 {
@@ -104,7 +104,7 @@ DELETE http://localhost:8080/user?login=someusername
 Lastly, I plan to introduce a route `list` to allow for a list of all users and their scores to be obtained. For each user name stored in the database, an up-to-date popularity score is calculated.
 
 ````http
-GET http://localhost:8080/list
+GET http://localhost:8080/list/
 ````
 
 This is what a response to such a request might look like:

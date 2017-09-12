@@ -1,4 +1,4 @@
-package com.lambdarookie.popularity.dataclasses;
+package com.lambdarookie.popularity.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

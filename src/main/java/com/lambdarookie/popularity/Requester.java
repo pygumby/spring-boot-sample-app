@@ -1,7 +1,7 @@
 package com.lambdarookie.popularity;
 
 import org.springframework.web.client.RestTemplate;
-import com.lambdarookie.popularity.dataclasses.User;
+import com.lambdarookie.popularity.models.User;
 import com.lambdarookie.popularity.exceptions.InternalServerErrorException;
 import com.lambdarookie.popularity.exceptions.NotFoundException;
 
