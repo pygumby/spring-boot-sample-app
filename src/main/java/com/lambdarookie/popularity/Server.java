@@ -87,7 +87,7 @@ public class Server {
   // A GitHub user name (`login`) has to be provided and it will be deleted from the database.
   @RequestMapping(value = "user", method = RequestMethod.DELETE)
   public void deleteUser(@RequestParam(value = "login") String login)
-      throws NotFoundException, InternalServerErrorException, BadRequestException, ForbiddenException {
+      throws BadRequestException {
     this.throwExceptionIfNull(login);
     this.persistor.removeLogin(login);
   }
