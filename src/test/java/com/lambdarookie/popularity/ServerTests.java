@@ -26,8 +26,7 @@ public class ServerTests {
   @Test
   public void getScoreStatusShouldBeOk() throws Exception {
     this.mockMvc
-      // For this and some of the following tests to succeed, of course, it is required that the GitHub account @odersky
-      // has not been deleted.
+      // For this and some following tests to succeed, it is necessary that the GitHub account @odersky still exists.
       .perform(get("/score").param("login", "odersky"))
       .andExpect(status().isOk());
       // At the time of this writing, @odersky's score was 1 (highest). To test that as well, uncomment the following:
@@ -62,7 +61,7 @@ public class ServerTests {
       .andExpect(status().isOk());
     this.mockMvc
       // TODO Avoid dependencies!
-      // This test should not rely on `DELETE` requests to route `user` for its clean-up. Below, these requests are
+      // This test should not rely on `DELETE` requests to the route `user` for its clean-up. Below, these requests are
       // tested separately.
       .perform(delete("/user").param("login", "odersky"));
   }
@@ -97,7 +96,7 @@ public class ServerTests {
       .andExpect(status().isOk());
     this.mockMvc
       .perform(delete("/user").param("login", "odersky"))
-      // TODO Avoid misleading design!
+      // TODO Avoid misleading HTTP status codes!
       // Caution! The database silently ignores malicious queries. Therefore, we could have asked it to delete "odersky"
       // even if this user name had not been stored in the database, and we would have still gotten the HTTP status code
       // `OK`. Accordingly, this does not indicate a successful database operation! It only indicates that the request

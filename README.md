@@ -26,7 +26,7 @@ Make sure you have Java (8 or newer) and Gradle (2.3 or newer) installed, then n
 
 #### Requesting a user's score
 
-Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with a `GET` request to the route `score`, e.g.:
+Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with a `GET` request to the route `score`.
 
 ````http
 GET http://localhost:8080/score?login=ypsy
@@ -41,7 +41,7 @@ At the time of this writing, @ypsy had one follower and followed two users himse
 }
 ````
 
-Since this app features error handling and sensible HTTP status codes, malformed HTTP requests trigger exceptions that then result in responses with respective status codes. Below you can see malicious requests and how the app responds to them:
+Since this app features error handling and sensible HTTP status codes, malformed HTTP requests trigger exceptions that then result in responses with the respective status codes. Below you can see malicious requests and how the app responds to them:
 
 ````http
 GET http://localhost:8080/score?login=
@@ -92,7 +92,7 @@ GET http://localhost:8080/score?login=someusernameveryveryunlikelytoexist
 
 It is possible to store and delete GitHub user names to and from a database, respectively. Note that since an in-memory H2 database is used, data is only persisted as long as the server is running. Persistence is only featured in this app to demonstrate dependency injection and ORM.
 
-User names can be stored or deleted by issuing a `POST` or `DELETE` request to the `user` route, respectively, e.g.:
+User names can be stored or deleted by issuing a `POST` or `DELETE` request to the `user` route, respectively.
 
 ````http
 POST   http://localhost:8080/user?login=ypsy
@@ -101,11 +101,11 @@ DELETE http://localhost:8080/user?login=ypsy
 
 Malformed `POST` requests to the route `user` result in the following HTTP status codes:
 
-| HTTP status code      | Reason                                   |
-| --------------------- | ---------------------------------------- |
-| `BadRequest`          | `String login` is `null` or empty.       |
-| `Forbidden`           | User @lambdarookie is not allowed to be looked up. |
-| `NotFound`            | User with the provided name cannot be found. |
+| HTTP status code      | Reason                                                                                                                                               |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BadRequest`          | `String login` is `null` or empty.                                                                                                                   |
+| `Forbidden`           | GitHub user @lambdarookie is not allowed to be looked up.                                                                                            |
+| `NotFound`            | GitHub user with the provided name cannot be found.                                                                                                  |
 | `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown. |
 
 Malformed `DELETE` requests to the route `user` result in the following HTTP status codes:
@@ -116,9 +116,9 @@ Malformed `DELETE` requests to the route `user` result in the following HTTP sta
 
 Some malicious behaviour is silently ignored by the database, e.g., storing the same user name more than once or deleting a user name that is not stored.
 
-#### Requesting a list of stored users and their popularity scores
+#### Requesting a list of the stored user names and the respective popularity scores
 
-Lastly, by issuing a `GET` request to the `list` route, a list containing all users stored in the database as well as their popularity scores can be obtained. For each user name stored in the database, an up-to-date score is calculated.
+Lastly, by issuing a `GET` request to the `list` route, a list containing all GitHub user names stored in the database as well as their popularity scores can be obtained. For each user name stored in the database, an up-to-date score is calculated.
 
 ````http
 GET http://localhost:8080/list/
@@ -135,10 +135,10 @@ This is what a response to such a request might look like:
 
 Malformed `GET` requests to the route `list` result in the following HTTP status codes:
 
-| HTTP status code      | Reason                                   |
-| --------------------- | ---------------------------------------- |
-| `NotFound`            | User with the stored name cannot be found. (This should only happen if the respective GitHub account has been deleted after it has been stored to the database.) |
-| `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown. |
+| HTTP status code      | Reason                                                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `NotFound`            | GitHub user with the stored name cannot be found. (This should only happen if the respective GitHub account has been deleted after it's name has been stored to the database.) |
+| `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown.                           |
 
 ### Credit
 

@@ -3,14 +3,16 @@ package com.lambdarookie.popularity.models;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-// `@Table` is annotation left out, so it is assumed that this entity will be mapped to a table `Customer`.
-@Entity // Indicating a JPA entity
+// `@Table` is annotation left out, so it is assumed that this entity will be mapped to a table `UserName`.
+@Entity // Indicates a JPA entity
+// Represents a GitHub user's name (`login`)
 public class UserName {
 
-  @Id // Indicating that `login` is the JPA entity's id
+  @Id // Indicates that `login` is the JPA entity's id
+  // Contains the user's name (`login`)
   private String login;
 
-  // Default constructor only exists for the JPA
+  // Default constructor only exists for the JPA.
   protected UserName() {
   }
 

@@ -19,14 +19,14 @@ public class Calculator {
     final double maxScore = 10d;  // Ratio of 10 followers : 1 following
     final double followers = user.getFollowers();
     final double following = user.getFollowing();
-    // Avoid division by zero
+    // Avoiding division by zero
     if (following == 0 && followers == 0) {
       return 0;
     }
     if (following == 0 /* && followers != 0 */) {
       return 1;
     }
-    // Divide followers by following and return normalized ratio as score
+    // Dividing followers by following and return normalized ratio as score
     final double score = followers / following;
     if (score < minScore) {
       return 0;

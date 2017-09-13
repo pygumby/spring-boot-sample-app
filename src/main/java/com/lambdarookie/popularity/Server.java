@@ -11,14 +11,14 @@ import com.lambdarookie.popularity.models.Score;
 import com.lambdarookie.popularity.models.User;
 import com.lambdarookie.popularity.exceptions.*;
 
-// Defines the app's REST API
 @RestController
+// Defines the app's REST API
 public class Server {
 
-  @Autowired
-  private final Persistor persistor = new Persistor();
   private final Requester requester = new Requester();
   private final Calculator calculator = new Calculator();
+  @Autowired // Indicates that an instance of `UserNameRepository` will be injected
+  private Persistor persistor;
 
   // Wiring `BadRequestException` to HTTP status `400 Bad Request`
   @ExceptionHandler(BadRequestException.class)
@@ -44,12 +44,12 @@ public class Server {
     response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
-  // `throwExceptionIfNull` will throw an exception if the provided String `login` is null or empty.
+  // `throwExceptionIfNull` will throw an exception if the provided `String login` is null or empty.
   private void throwExceptionIfNull(String login) throws BadRequestException {
     if (login == null || login.isEmpty())
       throw new BadRequestException("String parameter 'login' cannot be null or empty.");
   }
-  // `throwExceptionIfForbidden` will throw an exception if the provided String `login` equals "lambdarookie".
+  // `throwExceptionIfForbidden` will throw an exception if the provided `String login` equals "lambdarookie".
   private void throwExceptionIfForbidden(String login) throws ForbiddenException {
     if (login.equals("lambdarookie"))
       throw new ForbiddenException("No no no, I am embarrassed of my score, you can't look it up.");
@@ -59,8 +59,8 @@ public class Server {
     this.requester.requestUser(login); // May throw NotFoundException, InternalServerErrorException
   }
 
-  // Definition of the `/score?login=someusername` route (GET)
-  // A GitHub user name (`login`) has to be provided, an instance of `Score`, representing the user's popularity score
+  // Definition of the `/score?login=someusername` route (`GET`)
+  // A GitHub user name (`login`) has to be provided and instance of `Score`, representing the user's popularity score,
   // will be returned.
   @RequestMapping(value = "score", method=RequestMethod.GET)
   public Score getScore(@RequestParam(value = "login") String login)
@@ -72,7 +72,7 @@ public class Server {
     return new Score(user.getLogin(), score);
   }
 
-  // Definition of the `/user?login=someusername` route (POST)
+  // Definition of the `/user?login=someusername` route (`POST`)
   // A GitHub user name (`login`) has to be provided and it will be stored in the database.
   @RequestMapping(value = "user", method = RequestMethod.POST)
   public void postUser(@RequestParam(value = "login") String login)
@@ -83,7 +83,7 @@ public class Server {
     this.persistor.addLogin(login);
   }
 
-  // Definition of the `/user?login=someusername` route (DELETE)
+  // Definition of the `/user?login=someusername` route (`DELETE`)
   // A GitHub user name (`login`) has to be provided and it will be deleted from the database.
   @RequestMapping(value = "user", method = RequestMethod.DELETE)
   public void deleteUser(@RequestParam(value = "login") String login)
@@ -92,7 +92,7 @@ public class Server {
     this.persistor.removeLogin(login);
   }
 
-  // Definition of the `/list/` route (GET)
+  // Definition of the `/list/` route (`GET`)
   // A `Set` of `Score`s (one for each GitHub user stored in the database) will be returned.
   @RequestMapping(value = "list", method = RequestMethod.GET)
   public Set<Score> getList() throws NotFoundException, InternalServerErrorException {

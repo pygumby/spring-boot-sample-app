@@ -44,5 +44,4 @@ public class CalculatorTests {
     Assert.assertEquals(0.494949d, this.calculator.calculateScore(user), 0.00001d);
   }
 
-
 }

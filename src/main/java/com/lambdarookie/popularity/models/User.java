@@ -2,12 +2,13 @@ package com.lambdarookie.popularity.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// Represents a GitHub user
 @JsonIgnoreProperties(ignoreUnknown = true)
+// Represents a GitHub user
 public class User {
 
-  // For the sake of simplicity, all properties returned by GitHub's API are discarded, except the user's name (`login`)
-  // as well as the number of followers and following.
+  // For the sake of simplicity, all properties returned by GitHub's API are discarded, except the ones listed below,
+  // i.e., the user's name (`login`) as well as the number of followers and following. This is what the
+  // `@JsonIgnoreProperties` annotation is for.
   private String login;
   private Long followers;
   private Long following;

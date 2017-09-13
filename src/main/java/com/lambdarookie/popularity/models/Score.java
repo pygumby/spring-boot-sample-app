@@ -3,7 +3,7 @@ package com.lambdarookie.popularity.models;
 // Represents a GitHub user's popularity score
 public class Score {
 
-  // Simply contains the user's name (`login`) and score
+  // Contains the user's name (`login`) and score
   private final String login;
   private final Double score;
 
