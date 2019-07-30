@@ -1,30 +1,47 @@
-# SpringBootSampleApp
+# spring-boot-sample-app
 
-## An exemplary app using basic features of Spring Boot
+**An example app using basic features of Spring Boot**
 
-### Overview
+---
+
+* spring-boot-sample-app has been created by Lucas Baerenfaenger ([@lambdarookie](https://github.com/lambdarookie), [lambdarookie.com](https://lambdarookie.com)).
+* Copyright Lucas Baerenfaenger 2017.
+
+---
+
+1. [Overview](#1-overview)
+   1. [Feature requirements](#11-feature-requirements)
+   2. [Implementation requirements](#12-implementation-requirements)
+2. [Usage](2-usage)
+   1. [Requesting a user's score](#21-requesting-a-users-score)
+   2. [Storing and deleting user names](#22-storing-and-deleting-user-names)
+   3. [Requesting a list of the stored user names and the respective popularity scores](#23-requesting-a-list-of-the-stored-user-names-and-the-respective-popularity-scores)
+
+---
+
+## 1. Overview
 
 As part of the job application process at a German fintech start-up, I was asked to write a simple Java application featuring some basic functionality. I ended up implementing this exemplary app called `popularity` using Spring Boot. It revolves around the notion of a fairly bogus "GitHub popularity score", which is based on the ratio between the number of people that follow a user and the number of people that user follows.
 
 This app is supposed to fulfill a set of requirements, which are listed below.
 
-#### Feature requirements
+### 1.1. Feature requirements
 - [x] The app should provide a REST API that takes parameters and returns reasonable HTTP status codes.
 - [x] GitHub's REST API should somehow be used.
 - [x] Data should be persisted in a database such as MySQL or H2 using ORM.
 
-#### Implementation requirements
+### 1.2. Implementation requirements
 - [x] Git and GitHub should be used.
 - [x] A framework such as Java EE 8 or Spring (Boot) should be used.
 - [x] The code should be structured meaningfully.
 - [x] Basic error handing should be done.
 - [x] There should be unit tests.
 
-### Usage
+## 2. Usage
 
 Make sure you have Java (8 or newer) and Gradle (2.3 or newer) installed, then navigate into the project root directory and do `gradle test` to make sure everything is fine. In case some tests fail, information is provided in the file `build/reports/tests/test/index.html`. In order to start the app, do `gradle bootRun`. Once the app is running, you can issue HTTP requests to the server at `http://localhost:8080/`.
 
-#### Requesting a user's score
+### 2.1. Requesting a user's score
 
 Requesting the popularity score of a GitHub user, e.g., @ypsy, can be done with a `GET` request to the route `score`.
 
@@ -88,7 +105,7 @@ GET http://localhost:8080/score?login=someusernameveryveryunlikelytoexist
 }
 ````
 
-#### Storing and deleting user names
+### 2.2. Storing and deleting user names
 
 It is possible to store and delete GitHub user names to and from a database, respectively. Note that since an in-memory H2 database is used, data is only persisted as long as the server is running. Persistence is only featured in this app to demonstrate dependency injection and ORM.
 
@@ -116,7 +133,7 @@ Malformed `DELETE` requests to the route `user` result in the following HTTP sta
 
 Some malicious behaviour is silently ignored by the database, e.g., storing the same user name more than once or deleting a user name that is not stored.
 
-#### Requesting a list of the stored user names and the respective popularity scores
+### 2.3. Requesting a list of the stored user names and the respective popularity scores
 
 Lastly, by issuing a `GET` request to the `list` route, a list containing all GitHub user names stored in the database as well as their popularity scores can be obtained. For each user name stored in the database, an up-to-date score is calculated.
 
@@ -139,7 +156,3 @@ Malformed `GET` requests to the route `list` result in the following HTTP status
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `NotFound`            | GitHub user with the stored name cannot be found. (This should only happen if the respective GitHub account has been deleted after it's name has been stored to the database.) |
 | `InternalServerError` | Either GitHub's API returned an error that is not a 404 error or something unexpected happened within this app and caused an exception to be thrown.                           |
-
-### Credit
-
-Copyright (C) 2017 Lucas Bärenfänger ([@lambdarookie](https://github.com/lambdarookie/))
