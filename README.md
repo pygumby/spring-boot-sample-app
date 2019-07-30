@@ -4,8 +4,8 @@
 
 ---
 
-* spring-boot-sample-app has been created by Lucas Baerenfaenger ([@lambdarookie](https://github.com/lambdarookie), [lambdarookie.com](https://lambdarookie.com)).
-* Copyright Lucas Baerenfaenger 2017.
+* **spring-boot-sample-app** has been created by Lucas Baerenfaenger ([@lambdarookie](https://github.com/lambdarookie), [lambdarookie.com](https://lambdarookie.com)).
+* Copyright © 2017 Lucas Baerenfaenger.
 
 ---
 
